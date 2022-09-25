@@ -9,40 +9,42 @@ import org.dom4j.io.SAXReader;
 import org.temkarus0070.XPathCalculator;
 
 public class Dom4jMemTest implements MemoryTest{
+   private  long result=-1;
     @Override
     public void doTest(InputStream file, Set<String> searchedValues, String tagToCalcCount) throws ParserConfigurationException {
         try(file) {
+            long begin=System.nanoTime();
             SAXReader saxReader=new SAXReader();
             org.dom4j.Document document = saxReader.read(file);
             List<Node> nodesWithValuesAndTag = document.selectNodes(XPathCalculator.getXpath(searchedValues,tagToCalcCount));
-            printCountWithValues(nodesWithValuesAndTag,searchedValues);
-            printCountWithTag(nodesWithValuesAndTag,tagToCalcCount);
+            printCountWithValuesAndTagCount(nodesWithValuesAndTag,searchedValues,tagToCalcCount);
+            long end=System.nanoTime();
+        result=end-begin;
         }
         catch (Exception ex){
             ex.printStackTrace();
         }
     }
 
-private void printCountWithValues(List<Node> list,Set<String> values){
-        int count=0;
+private void printCountWithValuesAndTagCount(List<Node> list, Set<String> values,String tag){
+        int valueCount=0;
+    int tagCount=0;
     for (Node node : list) {
         if (values.contains(node.getStringValue())){
-            count++;
+            valueCount++;
         }
-    }
-    System.out.println(count);
-}
-private void printCountWithTag(List<Node> list,String tag){
-    int count=0;
-    for (Node node : list) {
         if (node.getName().equals(tag)){
-            count++;
+            tagCount++;
         }
     }
-    System.out.println(count);
+    System.out.println(valueCount);
+    System.out.println(tagCount);
 }
+
     @Override
-    public double getTestResult() throws IllegalArgumentException {
-        return 0;
+    public long getTestResult() throws IllegalArgumentException {
+        if (result==-1)
+            throw new IllegalArgumentException();
+        return result;
     }
 }

@@ -11,13 +11,17 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 public class SaxMemTest implements MemoryTest{
+    long result=-1;
     @Override
     public void doTest(InputStream file, Set<String> searchedValues, String tagToCalcCount) throws ParserConfigurationException {
         try(file){
+            long begin=System.nanoTime();
             SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
             SAXParser saxParser = saxParserFactory.newSAXParser();
             UserHandler userHandler = new UserHandler(searchedValues, tagToCalcCount);
             saxParser.parse(file,userHandler);
+            long end=System.nanoTime();
+            result=end-begin;
         }
         catch (IOException | SAXException ioException){
             ioException.printStackTrace();
@@ -25,8 +29,10 @@ public class SaxMemTest implements MemoryTest{
     }
 
     @Override
-    public double getTestResult() throws IllegalArgumentException {
-        return 0;
+    public long getTestResult() throws IllegalArgumentException {
+        if (result==-1)
+            throw  new IllegalArgumentException();
+        return result;
     }
 }
 

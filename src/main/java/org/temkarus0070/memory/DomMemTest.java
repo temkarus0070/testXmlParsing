@@ -13,13 +13,17 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 public class DomMemTest implements MemoryTest {
+    private  long result=-1;
     @Override
     public void doTest(InputStream file, Set<String> searchedValues, String tagToCalcCount) throws ParserConfigurationException {
         try (file) {
+            long begin=System.nanoTime();
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder documentBuilder = factory.newDocumentBuilder();
             Document parse = documentBuilder.parse(file);
             testAllElementsCheckAndTag(searchedValues,parse.getDocumentElement(),tagToCalcCount);
+        long end=System.nanoTime();
+        result=end-begin;
         } catch (IOException | SAXException e) {
             e.printStackTrace();
         }
@@ -65,7 +69,9 @@ public class DomMemTest implements MemoryTest {
     }
 
     @Override
-    public double getTestResult() throws IllegalArgumentException {
-        return 0;
+    public long getTestResult() throws IllegalArgumentException {
+        if (result==-1)
+           throw  new IllegalArgumentException();
+        return result;
     }
 }

@@ -6,5 +6,5 @@ import javax.xml.parsers.ParserConfigurationException;
 
 public interface MemoryTest {
     public void doTest(InputStream file, Set<String> searchedValues, String tagToCalcCount) throws ParserConfigurationException;
-    public double getTestResult() throws IllegalArgumentException;
+    public long getTestResult() throws IllegalArgumentException;
 }

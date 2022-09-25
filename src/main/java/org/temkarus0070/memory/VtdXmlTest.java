@@ -9,9 +9,11 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.temkarus0070.XPathCalculator;
 
 public class VtdXmlTest implements MemoryTest{
+    long result=-1;
     @Override
     public void doTest(InputStream file, Set<String> searchedValues, String tagToCalcCount) throws ParserConfigurationException {
         try(file) {
+            long begin=System.nanoTime();
             int tagCount = 0;
             int valueCount = 0;
 
@@ -36,6 +38,8 @@ public class VtdXmlTest implements MemoryTest{
             }
             System.out.println(valueCount);
             System.out.println(tagCount);
+            long end=System.nanoTime();
+            result=end-begin;
         }
         catch (Exception ex){
             ex.printStackTrace();
@@ -44,7 +48,9 @@ public class VtdXmlTest implements MemoryTest{
 
 
     @Override
-    public double getTestResult() throws IllegalArgumentException {
-        return 0;
+    public long getTestResult() throws IllegalArgumentException {
+        if (result==-1)
+            throw  new IllegalArgumentException();
+        return result;
     }
 }

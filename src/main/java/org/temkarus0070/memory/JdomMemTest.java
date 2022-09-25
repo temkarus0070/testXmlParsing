@@ -13,12 +13,16 @@ import org.jdom2.input.SAXBuilder;
 
 //JDOM 2/0/6/1 имеет 4 уязвимости из зависимостей
 public class JdomMemTest implements MemoryTest{
+    long result=-1;
     @Override
     public void doTest(InputStream file, Set<String> searchedValues, String tagToCalcCount) throws ParserConfigurationException {
 try(file){
+    long begin=System.nanoTime();
     SAXBuilder saxBuilder = new SAXBuilder();
     Document document = saxBuilder.build(file);
 checkValuesAndTags(searchedValues,document.getRootElement(),tagToCalcCount);
+long end=System.nanoTime();
+result=end-begin;
 }
 catch (IOException | JDOMException e){
     e.printStackTrace();
@@ -46,7 +50,9 @@ catch (IOException | JDOMException e){
     }
 
     @Override
-    public double getTestResult() throws IllegalArgumentException {
-        return 0;
+    public long getTestResult() throws IllegalArgumentException {
+        if (result==-1)
+            throw  new IllegalArgumentException();
+        return result;
     }
 }

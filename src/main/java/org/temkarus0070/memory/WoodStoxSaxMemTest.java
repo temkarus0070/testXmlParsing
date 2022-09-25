@@ -12,21 +12,29 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 public class WoodStoxSaxMemTest implements MemoryTest{
+    long result=-1;
+    long begin=0;
     @Override
     public void doTest(InputStream file, Set<String> searchedValues, String tagToCalcCount) throws ParserConfigurationException {
         try(file){
+            begin=System.nanoTime();
             SAXParserFactory saxParserFactory = WstxSAXParserFactory.newInstance();
             SAXParser saxParser = saxParserFactory.newSAXParser();
             saxParser.parse(file,new WoodStoxUserHandler(searchedValues, tagToCalcCount));
+            long end=System.nanoTime();
+            result=end-begin;
         }
         catch (IOException | ParserConfigurationException | SAXException e){
             e.printStackTrace();
         }
     }
 
+
     @Override
-    public double getTestResult() throws IllegalArgumentException {
-        return 0;
+    public long getTestResult() throws IllegalArgumentException {
+        if (result==-1)
+            throw  new IllegalArgumentException();
+        return result;
     }
 }
 class WoodStoxUserHandler extends DefaultHandler {
