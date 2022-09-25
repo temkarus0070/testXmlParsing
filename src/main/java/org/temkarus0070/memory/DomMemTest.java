@@ -46,11 +46,14 @@ public class DomMemTest implements MemoryTest {
             int length = last.getLength();
             for (int i = 0; i < length; i++) {
                 Node element = last.item(i);
-                if (element.getNodeName().equals(tag)){
+                String nodeName = element.getNodeName();
+                int prefixIndex = nodeName.indexOf(":");
+                nodeName = nodeName.substring(prefixIndex == -1 ? 0 : prefixIndex + 1);
+                if (nodeName.equals(tag)) {
                     tagCount++;
                 }
-                if (element.getNodeValue()!=null&&searchedValues.contains(element.getNodeValue())) {
-             valueCount++;
+                if (element.getNodeValue() != null && searchedValues.contains(element.getNodeValue())) {
+                    valueCount++;
                 }
                 NodeList childNodes = element.getChildNodes();
                 if (childNodes.getLength() > 0)

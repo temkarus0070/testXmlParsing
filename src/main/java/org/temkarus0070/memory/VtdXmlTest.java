@@ -12,21 +12,24 @@ public class VtdXmlTest implements MemoryTest{
     @Override
     public void doTest(InputStream file, Set<String> searchedValues, String tagToCalcCount) throws ParserConfigurationException {
         try(file) {
-            int tagCount=0;
-            int valueCount=0;
-            AutoPilot ap = new AutoPilot();
-            ap.selectXPath(XPathCalculator.getXpath(searchedValues,tagToCalcCount));
+            int tagCount = 0;
+            int valueCount = 0;
+
             VTDGen vg = new VTDGen();
             vg.setDoc(file.readAllBytes());
+            vg.parse(true);
             VTDNav nav = vg.getNav();
-          int i=0;
-            ap.bind(nav);
-            while((i=ap.evalXPath())!=-1){
-                if (nav.toString(nav.getCurrentIndex()).equals(tagToCalcCount)) {
+            AutoPilot ap = new AutoPilot(nav);
+            int i = -1;
+            ap.selectXPath(XPathCalculator.getXpath(searchedValues, tagToCalcCount));
+            while ((i = ap.evalXPath()) != -1) {
+                String s = nav.toString(i);
+                int prefixIndex = s.indexOf(":");
+                if (s.substring(prefixIndex == -1 ? 0 : prefixIndex + 1).equals(tagToCalcCount)) {
                     tagCount++;
                 }
-                String value = nav.toString(nav.getText());
-                if (searchedValues.contains(value)){
+                String value = nav.toString(i + 1);
+                if (searchedValues.contains(value)) {
                     valueCount++;
                 }
 

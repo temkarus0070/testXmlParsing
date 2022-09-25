@@ -38,7 +38,7 @@ catch (IOException | JDOMException e){
             if (element.getName().equals(tag)){
                 tagsCount++;
             }
-            List<Element> children = root.getChildren();
+            List<Element> children = element.getChildren();
         stack.addAll(children);
         }
         System.out.println(valuesCount);

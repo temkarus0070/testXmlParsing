@@ -20,7 +20,7 @@ public class XPathCalculator {
         for (String value : values) {
             stringBuilder.append(String.format("text()=\"%s\" or ",value));
         }
-        stringBuilder.append(String.format("name()=\"%s\"",tagName));
+        stringBuilder.append(String.format("local-name()=\"%s\"", tagName));
         stringBuilder.append("]");
         return stringBuilder.toString();
     }

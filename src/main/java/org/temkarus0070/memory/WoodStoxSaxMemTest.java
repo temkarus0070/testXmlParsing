@@ -43,7 +43,9 @@ class WoodStoxUserHandler extends DefaultHandler {
 
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-        if (qName.equals(tagToCalcCount))
+        int indexOfPrefix = qName.indexOf(":");
+        String localName1 = qName.substring(indexOfPrefix == -1 ? 0 : indexOfPrefix + 1);
+        if (localName1.equals(tagToCalcCount))
             tagCount++;
     }
 
