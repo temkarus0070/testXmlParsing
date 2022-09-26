@@ -13,30 +13,15 @@ public class XomMemTest implements MemoryTest{
     public void doTest(InputStream file, Set<String> searchedValues, String tagToCalcCount) throws ParserConfigurationException {
         try(file) {
             long begin=System.nanoTime();
-            Builder parser = new Builder(true);
+            Builder parser = new Builder(false);
             Document doc = null;
-            try {
                 doc = parser.build(file);
-            } catch (nu.xom.ValidityException validityException) {
-                if (!validityException.getMessage().contains("Document root element \"Envelope\", must match DOCTYPE root")) {
-                    validityException.printStackTrace();
-                }
-                doc = validityException.getDocument();
-            } catch (nu.xom.ParsingException parsingException) {
-               parsingException.printStackTrace();
-            }
             Nodes elementsWithSearchedValues = doc.getRootElement().query(XPathCalculator.getXpath(searchedValues,tagToCalcCount));
            printValuesAndTagCount(elementsWithSearchedValues,searchedValues,tagToCalcCount);
            long end=System.nanoTime();
            result=end-begin;
-        } catch (IOException ioException) {
+        } catch (IOException | ParsingException ioException) {
             ioException.printStackTrace();
-        } finally {
-            try {
-                file.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
         }
     }
 

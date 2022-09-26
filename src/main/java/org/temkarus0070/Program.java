@@ -16,7 +16,8 @@ public class Program {
         List<String> files = List.of("10", "23", "25", "50", "75", "602");
         //   List<String> files=List.of("10");
         //NOT ALL //List<MemoryTest> memoryTests=List.of(new JdomMemTestWithXPATH(), new SaxMemTest(),new VtdXmlTest(),new WoodStoxSaxMemTest(),new XomMemTest(),new XpathMemTest());
-        List<MemoryTest> memoryTests = List.of(new Dom4jMemTest(), new DomMemTest(), new JdomMemTest(), new JdomMemTestWithXPATH(), new SaxMemTest(), new VtdXmlTest(), new WoodStoxSaxMemTest(), new XomMemTest(), new XpathMemTest());
+       // List<MemoryTest> memoryTests = List.of(new Dom4jMemTest(), new DomMemTest(), new JdomMemTest(), new JdomMemTestWithXPATH(), new SaxMemTest(), new VtdXmlTest(), new WoodStoxSaxMemTest(), new XomMemTest(), new XpathMemTest());
+        List<MemoryTest> memoryTests = List.of(new StaxMemTest());
         Set<String> values = Set.of("Выпуск товаров разрешен", "ЛАСТОЧКИНА АЛИНА ДМИТРИЕВНА");
         //  String tag="catESAD_ru:DecisionCode"; //ПРОБЛЕМЫ С НЕЙМСПЕЙСОМ ПРИ XPATH
         String tag = "DecisionCode";
@@ -25,13 +26,13 @@ public class Program {
         doTests(files.subList(0, 2), values, tag, memoryTests, contextClassLoader, 1, null, null);
         System.out.println("end prepare");
         try {
-            Thread.sleep(20000);
+            Thread.sleep(1);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
         System.out.println("BEGIN TESTS!!!");
         try (FileWriter fileWriter = new FileWriter("tests.txt"); FileWriter timeWritter = new FileWriter("time.txt")) {
-            doTests(files, values, tag, memoryTests, contextClassLoader, 3, fileWriter, timeWritter);
+            doTests(files, values, tag, memoryTests, contextClassLoader, 1, fileWriter, timeWritter);
             fileWriter.flush();
             timeWritter.flush();
         } catch (IOException ioException) {
@@ -42,7 +43,9 @@ public class Program {
 
     private static void doTests(List<String> files, Set<String> values, String tag, List<MemoryTest> memoryTests, ClassLoader contextClassLoader, int repeatCount, FileWriter fileWriter, FileWriter timeWritter) {
         for (String file : files) {
-            try (InputStream inputStream = contextClassLoader.getResourceAsStream(String.format("%s.xml", file));) {
+            String fileName = String.format("%s.xml", file);
+            System.out.println(fileName);
+            try (InputStream inputStream = contextClassLoader.getResourceAsStream(fileName);) {
                 byte[] allBytes = new byte[0];
                 try {
                     allBytes = inputStream.readAllBytes();
@@ -63,7 +66,7 @@ public class Program {
                             memoryTest.doTest(byteArrayInputStream, values, tag);
                             result += memoryTest.getTestResult();
                             if (fileWriter != null)
-                                Thread.sleep(20000);
+                                Thread.sleep(1);
                             if (timeWritter != null) {
                                 timeWritter.write(String.format("END %s %d fileSize=%d %s\n", memoryTest.getClass().getSimpleName(), i,
                                         allBytes.length, LocalTime.now().toString()));
