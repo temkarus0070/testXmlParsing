@@ -1,0 +1,57 @@
+package org.temkarus0070.memory;
+
+import com.ximpleware.AutoPilot;
+import com.ximpleware.VTDGen;
+import com.ximpleware.VTDNav;
+import org.temkarus0070.XPathCalculator;
+
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.InputStream;
+import java.util.Set;
+
+public class vtdXmlWithoutXpathMemTest implements MemoryTest{
+    long result=-1;
+    @Override
+    public void doTest(InputStream file, Set<String> searchedValues, String tagToCalcCount) throws ParserConfigurationException {
+        try(file) {
+            long begin=System.nanoTime();
+            int tagCount = 0;
+            int valueCount = 0;
+
+            VTDGen vg = new VTDGen();
+            vg.setDoc(file.readAllBytes());
+            vg.parse(true);
+            VTDNav nav = vg.getNav();
+            AutoPilot ap = new AutoPilot(nav);
+            int i = -1;
+            ap.selectElement("*");
+            while (ap.iterate()) {
+                String s = nav.toString(i);
+                int prefixIndex = s.indexOf(":");
+                if (s.substring(prefixIndex == -1 ? 0 : prefixIndex + 1).equals(tagToCalcCount)) {
+                    tagCount++;
+                }
+                String value = nav.toString(i + 1);
+                if (searchedValues.contains(value)) {
+                    valueCount++;
+                }
+
+            }
+            System.out.println(valueCount);
+            System.out.println(tagCount);
+            long end=System.nanoTime();
+            result=end-begin;
+        }
+        catch (Exception ex){
+            ex.printStackTrace();
+        }
+    }
+
+
+    @Override
+    public long getTestResult() throws IllegalArgumentException {
+        if (result==-1)
+            throw  new IllegalArgumentException();
+        return result;
+    }
+}
